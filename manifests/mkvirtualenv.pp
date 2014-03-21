@@ -27,6 +27,8 @@
 #     Set to a puppet:///file to set a postactivate script for the env
 #   [post_deactivate]
 #     Set to a puppet:///file to set a postdeactivate script for the env
+#   [python_exe]
+#     Which python interpreter to use (defaults to standard python)
 #
 # Notes:
 #   The project does not have to exist before creating the virutal env, but if
@@ -40,7 +42,8 @@ define python::mkvirtualenv (
   $distribute      = true,
   $project_dir     = undef,
   $post_activate   = undef,
-  $post_deactivate = undef
+  $post_deactivate = undef,
+  $python_exe      = undef
 ){
   require python
 
@@ -52,14 +55,20 @@ define python::mkvirtualenv (
         default => "-a ${project_dir}"
       }
 
+      $mkvenv_python_exe = $python_exe ? {
+        undef   => '',
+        default => "-p ${python_exe}"
+      }
+
       $mkvenv_syspkg = $systempkgs ? {
         true    => '--system-site-packages',
         default => ''
       }
 
+
       exec{ "python_mkvirtualenv_${name}":
         command  => ". ${boxen::config::home}/env.sh && \
-          mkvirtualenv ${mkvenv_proj} ${name} ${mkvenv_syspkg}",
+          mkvirtualenv ${mkvenv_proj} ${mkvenv_syspkg} ${mkvenv_python_exe} ${name}",
         provider => 'shell',
         user     => $::boxen_user,
         creates  => $venv_path,
