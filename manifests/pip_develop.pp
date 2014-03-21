@@ -45,17 +45,17 @@ define python::pip_develop (
   $venv_path = "${python::config::venv_home}/${virtualenv}"
 
   $py_module_path = $full_path ? {
-    unset   => "${path}/${name}",
+    undef => "${path}/${name}",
     default => $full_path
   }
 
   $py_module_name = $package_name ? {
-    unset   => $name,
+    undef => $name,
     default => $package_name
   }
 
   $py_module_optional_depends = $optional_depends ? {
-    unset   => '',
+    undef => '',
     default => "[${optional_depends}]"
   }
 
