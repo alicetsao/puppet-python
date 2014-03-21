@@ -17,14 +17,14 @@
 #     The base path of where to find [name], e.g. the leading path component.
 #     E.g. a repo at /home/someuser/workspace/shiney would have path set to
 #     /home/pcollins/workspace
-#     This made it hard to pip develop a single module in multiple virtual
+#     This made it hard to pip develop a single py_module in multiple virtual
 #     envs. Use full_path instead
 #
 #   [full_path]
-#     The full path to the module to install in the virtaulenv
+#     The full path to the py_module to install in the virtaulenv
 #
 #   [package_name]
-#     The name of the module you're installing (defaults to $name)
+#     The name of the py_module you're installing (defaults to $name)
 #
 #   [optional_depends]
 #     String to use for optional dependancies
@@ -44,17 +44,17 @@ define python::pip_develop (
 
   $venv_path = "${python::config::venv_home}/${virtualenv}"
 
-  $module_path = $full_path ? {
+  $py_module_path = $full_path ? {
     unset   => "${path}/${name}",
     default => $full_path
   }
 
-  $module_name = $package_name ? {
+  $py_module_name = $package_name ? {
     unset   => $name,
     default => $package_name
   }
 
-  $module_optional_depends = $optional_depends ? {
+  $py_module_optional_depends = $optional_depends ? {
     unset   => '',
     default => "[${optional_depends}]"
   }
@@ -62,17 +62,17 @@ define python::pip_develop (
   case $force {
     true:  {
       exec{ "pip install -e ${name}":
-        cwd     => $module_path,
-        command => "${venv_path}/bin/pip install -e .${module_optional_depends}",
+        cwd     => $py_module_path,
+        command => "${venv_path}/bin/pip install -e .${py_module_optional_depends}",
         require => Class['python::virtualenvwrapper'],
         timeout => $timeout
       }
     }
     default: {
       exec{ "pip install -e ${name}":
-        cwd     => $module_path,
-        command => "${venv_path}/bin/pip install -e .${module_optional_depends}",
-        creates => "${venv_path}/lib/python2.7/site-packages/${module_name}.egg-link",
+        cwd     => $py_module_path,
+        command => "${venv_path}/bin/pip install -e .${py_module_optional_depends}",
+        creates => "${venv_path}/lib/python2.7/site-packages/${py_module_name}.egg-link",
         require => Class['python::virtualenvwrapper'],
         timeout => $timeout
       }
