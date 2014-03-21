@@ -62,16 +62,24 @@ define python::pip_develop (
   case $force {
     true:  {
       exec{ "pip install -e ${name}":
-        cwd     => $py_module_path,
-        command => "${venv_path}/bin/pip install -e .${py_module_optional_depends}",
-        require => Class['python::virtualenvwrapper'],
-        timeout => $timeout
+        cwd      => $py_module_path,
+        command  => ". ${boxen::config::home}/env.sh && \
+          workon ${virtualenv} && \
+          pip install -e .${py_module_optional_depends}",
+        provider => 'shell',
+        user     => $::boxen_user,
+        require  => Class['python::virtualenvwrapper'],
+        timeout  => $timeout
       }
     }
     default: {
       exec{ "pip install -e ${name}":
-        cwd     => $py_module_path,
-        command => "${venv_path}/bin/pip install -e .${py_module_optional_depends}",
+        cwd      => $py_module_path,
+        command  => ". ${boxen::config::home}/env.sh && \
+          workon ${virtualenv} && \
+          pip install -e .${py_module_optional_depends}",
+        provider => 'shell',
+        user     => $::boxen_user,
         creates => "${venv_path}/lib/python2.7/site-packages/${py_module_name}.egg-link",
         require => Class['python::virtualenvwrapper'],
         timeout => $timeout
