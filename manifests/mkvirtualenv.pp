@@ -56,7 +56,7 @@ define python::mkvirtualenv (
       }
 
       $mkvenv_python_exe = $python_exe ? {
-        undev   => '',
+        undef   => '',
         default => "-p ${python_exe}"
       }
 
