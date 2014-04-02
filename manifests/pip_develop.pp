@@ -64,7 +64,7 @@ define python::pip_develop (
       exec{ "pip install -e ${name}":
         cwd      => $py_module_path,
         command  => ". ${boxen::config::home}/env.sh && \
-          workon ${virtualenv} && \
+          source ${venv_path}/bin/activate && \
           pip install -e .${py_module_optional_depends}",
         provider => 'shell',
         user     => $::boxen_user,
@@ -76,7 +76,7 @@ define python::pip_develop (
       exec{ "pip install -e ${name}":
         cwd      => $py_module_path,
         command  => ". ${boxen::config::home}/env.sh && \
-          workon ${virtualenv} && \
+          source ${venv_path}/bin/activate && \
           pip install -e .${py_module_optional_depends}",
         provider => 'shell',
         user     => $::boxen_user,
