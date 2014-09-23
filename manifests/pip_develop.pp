@@ -63,9 +63,9 @@ define python::pip_develop (
     true:  {
       exec{ "pip install -e ${name}":
         cwd      => $py_module_path,
-        command  => ". ${boxen::config::home}/env.sh && \
+        command  => "env -i bash -c 'source ${boxen::config::home}/env.sh && \
           source ${venv_path}/bin/activate && \
-          pip install -e .${py_module_optional_depends}",
+          pip install -e .${py_module_optional_depends}'",
         provider => 'shell',
         user     => $::boxen_user,
         require  => Class['python::virtualenvwrapper'],
@@ -75,9 +75,9 @@ define python::pip_develop (
     default: {
       exec{ "pip install -e ${name}":
         cwd      => $py_module_path,
-        command  => ". ${boxen::config::home}/env.sh && \
+        command  => "env -i bash -c 'source ${boxen::config::home}/env.sh && \
           source ${venv_path}/bin/activate && \
-          pip install -e .${py_module_optional_depends}",
+          pip install -e .${py_module_optional_depends}'",
         provider => 'shell',
         user     => $::boxen_user,
         creates => "${venv_path}/lib/python2.7/site-packages/${py_module_name}.egg-link",
